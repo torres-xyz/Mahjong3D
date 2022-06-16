@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7356827207086727229
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7356827207086727234}
+  - component: {fileID: 7356827207086727235}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7356827207086727234
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7356827207086727229}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7356827207086727235
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7356827207086727229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abff5f5e2f83c3f45bc778ff66eac2c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioClipsList:
+  - {fileID: 8300000, guid: 8a6f9a0a506cd6941a0c7089f280e263, type: 3}
+  - {fileID: 8300000, guid: 26b5c145054691643a6ee77f9104364c, type: 3}
+  - {fileID: 8300000, guid: f2e452eb4d6d3a7479d369931e555ed0, type: 3}
+  - {fileID: 8300000, guid: c4abf6ff8bf03df44a4cc9880740efe3, type: 3}
+  - {fileID: 8300000, guid: 2b908a2103b3b0b408ca2f7532495222, type: 3}
+  - {fileID: 8300000, guid: 8756dc89ffa5ff64c9d4ff311341d868, type: 3}
+  - {fileID: 8300000, guid: 63e07f865801be747927b8e696077119, type: 3}
+  - {fileID: 8300000, guid: 8b8cf648536512f4ebb6dfb21444a90b, type: 3}
+  - {fileID: 8300000, guid: abe5ad40806ecdc428f356c66ec26221, type: 3}
+  - {fileID: 8300000, guid: 475a7200f8440134997be7ffe21c53b0, type: 3}
+  musicVolume: 0.5
