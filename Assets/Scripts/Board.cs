@@ -11,7 +11,7 @@ public class Board : MonoBehaviour
     public static EventHandler BoardInitialized;
 
     [SerializeField] private Vector3Int boardSize;
-    [SerializeField] private float gapBetweenCubes;
+    private readonly float gapBetweenCubes = 0.1f;
     private TileSpawner tileSpawner;
     private List<Tile> tileList;
 

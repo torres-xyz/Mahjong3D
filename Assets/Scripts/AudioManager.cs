@@ -1,21 +1,24 @@
-using CustomHelperFunctions;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
+    [Range(0, 1)]
+    [SerializeField] float musicVolume;
     [SerializeField] List<AudioClip> audioClipsList;
+
     List<AudioSource> audioSourcePool;
     readonly int audioSourcePoolPreloadAmout = 5;
     AudioSource audioSourcePlayingLoopingMusic;
-    [Range(0, 1)]
-    [SerializeField] float musicVolume;
+    private int currentMultiplier;
+    private readonly int maxMultiplerGuesstimate = 20;
 
     private void Start()
     {
         InitializeAudioSourcePool();
         PlayLoopingMusic("Intro - Run For It");
+        currentMultiplier = 1;
     }
 
     private void OnEnable()
@@ -23,6 +26,7 @@ public class AudioManager : MonoBehaviour
         GameManager.PlayerFoundTilePair += OnPlayerFoundTilePair;
         GameManager.Victory += OnVictory;
         GameManager.TimeOutGameOver += OnTimeOutGameOver;
+        GameManager.MultiplierChanged += OnMultiplierChanged;
         Board.ClickedOnAStuckTile += OnClickedOnAStuckTile;
         Board.ClickedOnAFreeTile += OnClickedOnAFreeTile;
         PauseButton.PauseButtonWasPressed += OnButtonWasClicked;
@@ -40,6 +44,7 @@ public class AudioManager : MonoBehaviour
         GameManager.PlayerFoundTilePair -= OnPlayerFoundTilePair;
         GameManager.Victory -= OnVictory;
         GameManager.TimeOutGameOver -= OnTimeOutGameOver;
+        GameManager.MultiplierChanged -= OnMultiplierChanged;
         Board.ClickedOnAStuckTile -= OnClickedOnAStuckTile;
         Board.ClickedOnAFreeTile -= OnClickedOnAFreeTile;
         PauseButton.PauseButtonWasPressed -= OnButtonWasClicked;
@@ -52,6 +57,7 @@ public class AudioManager : MonoBehaviour
         PlayerControlls.SwippedLeftToRight -= OnSpinCamera;
         StartGameButton.LoadMainScene -= OnLoadMainScene;
     }
+
 
     //Music
     private void OnVictory(object sender, EventArgs e) => PlayLoopingMusic("Victory - New Age Ghost");
@@ -66,14 +72,27 @@ public class AudioManager : MonoBehaviour
     private void OnButtonWasClicked(object sender, EventArgs e) => PlayAudio("ButtonClicked");
     private void OnClickedOnAFreeTile(object sender, Tile e) => PlayAudio("FreeTile");
     private void OnClickedOnAStuckTile(object sender, EventArgs e) => PlayAudio("StuckTile");
-    private void OnPlayerFoundTilePair(object sender, (Tile, Tile) e) => PlayAudio("FoundTilePair_V2");
+    private void OnPlayerFoundTilePair(object sender, (Tile, Tile) e) => PlayAudio("FoundTilePair_V2", MultiplierToPitch(currentMultiplier));
+    //Logic
+    private void OnMultiplierChanged(object sender, int multi) => currentMultiplier = multi;
 
     private void PlayAudio(string clipToPlay)
     {
         AudioSource sourceToUse = GetAudioSourceFromPool();
         sourceToUse.clip = audioClipsList.Find(_ => _.name == clipToPlay);
+        sourceToUse.pitch = 1;
         sourceToUse.Play();
     }
+    private void PlayAudio(string clipToPlay, float pitch)
+    {
+        AudioSource sourceToUse = GetAudioSourceFromPool();
+        sourceToUse.clip = audioClipsList.Find(_ => _.name == clipToPlay);
+        sourceToUse.pitch = pitch;
+        sourceToUse.Play();
+    }
+
+    private float MultiplierToPitch(int multiplier) => Mathf.Lerp(1, 3, (multiplier - 1) / (float)maxMultiplerGuesstimate); // (multiplier - 1) because the base multiplier is already 1.
+
 
     private void PlayLoopingMusic(string clipToPlay)
     {

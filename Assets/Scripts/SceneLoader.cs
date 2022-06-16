@@ -25,6 +25,10 @@ public class SceneLoader : MonoBehaviour
 
     void Start()
     {
+#if UNITY_EDITOR
+        return;
+#endif
+
         //Only load intro scene at start if the Base Scene is the active scene.
         if (SceneManager.GetActiveScene() == SceneManager.GetSceneAt(0))
             StartCoroutine(WaitForLoadSceneAsync("IntroScene"));
