@@ -31,6 +31,8 @@ public class AudioManager : MonoBehaviour
         Board.ClickedOnAFreeTile += OnClickedOnAFreeTile;
         PauseButton.PauseButtonWasPressed += OnButtonWasClicked;
         PauseButton.PauseButtonWasPressed += OnPauseButtonWasClicked;
+        InstructionsButton.InstructionsButtonWasPressed += OnButtonWasClicked;
+        InstructionsButton.InstructionsButtonWasPressed += OnPauseButtonWasClicked;
         RestartGameButton.RestartGameButtonPressed += OnButtonWasClicked;
         RestartGameButton.RestartGameButtonPressed += OnRestartGame;
         ResumeButton.ResumeButtonWasPressed += OnButtonWasClicked;
@@ -49,6 +51,8 @@ public class AudioManager : MonoBehaviour
         Board.ClickedOnAFreeTile -= OnClickedOnAFreeTile;
         PauseButton.PauseButtonWasPressed -= OnButtonWasClicked;
         PauseButton.PauseButtonWasPressed -= OnPauseButtonWasClicked;
+        InstructionsButton.InstructionsButtonWasPressed -= OnButtonWasClicked;
+        InstructionsButton.InstructionsButtonWasPressed -= OnPauseButtonWasClicked;
         RestartGameButton.RestartGameButtonPressed -= OnButtonWasClicked;
         RestartGameButton.RestartGameButtonPressed -= OnRestartGame;
         ResumeButton.ResumeButtonWasPressed -= OnButtonWasClicked;

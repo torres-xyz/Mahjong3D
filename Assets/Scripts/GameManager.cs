@@ -32,6 +32,7 @@ public class GameManager : MonoBehaviour
         Board.BoardCleared += OnBoardCleared;
         Board.BoardInitialized += OnBoardInitialized;
         PauseButton.PauseButtonWasPressed += OnPause;
+        InstructionsButton.InstructionsButtonWasPressed += OnInstructions;
         ResumeButton.ResumeButtonWasPressed += OnResume;
         RestartGameButton.RestartGameButtonPressed += RestartGame;
     }
@@ -41,6 +42,7 @@ public class GameManager : MonoBehaviour
         Board.BoardCleared -= OnBoardCleared;
         Board.BoardInitialized -= OnBoardInitialized;
         PauseButton.PauseButtonWasPressed -= OnPause;
+        InstructionsButton.InstructionsButtonWasPressed -= OnInstructions;
         ResumeButton.ResumeButtonWasPressed -= OnResume;
         RestartGameButton.RestartGameButtonPressed -= RestartGame;
     }
@@ -94,6 +96,14 @@ public class GameManager : MonoBehaviour
         StopCoroutine(countdownTimer);
 
         SwitchCanvas?.Invoke(this, "Canvas - Pause");
+    }
+
+    private void OnInstructions(object sender, EventArgs e)
+    {
+        //Stop Timer
+        StopCoroutine(countdownTimer);
+
+        SwitchCanvas?.Invoke(this, "Canvas - Instructions");
     }
     private void OnBoardCleared(object sender, EventArgs e) => GameOver(victory: true);
     private void GameOver(bool victory)
