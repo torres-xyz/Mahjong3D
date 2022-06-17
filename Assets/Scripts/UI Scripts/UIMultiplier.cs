@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Text;
 using TMPro;
 using UnityEngine;
@@ -5,15 +6,26 @@ using UnityEngine;
 [RequireComponent(typeof(TMP_Text))]
 public class UIMultiplier : MonoBehaviour
 {
-    [SerializeField] private TMP_Text multiplierText;
+    private TMP_Text multiplierText;
+    private RectTransform rectTransform;
+    [SerializeField] private AnimationCurve animationCurve;
+    private Vector3 rectTransformStartScale;
+    IEnumerator growShrinkRoutine;
     private StringBuilder sbMultiplier;
     private readonly string charX = "x";
+    private int currentMultiplier = 1;
+    private readonly int magicNumberMaxMultiplier = 20;
 
     private void OnEnable()
     {
-        GameManager.MultiplierChanged += OnMultiplierChanged;
         if (multiplierText == null)
-            Debug.LogError("'multiplierText' was not set in the inspector");
+            multiplierText = GetComponent<TMP_Text>();
+        if (rectTransform == null)
+            rectTransform = GetComponent<RectTransform>();
+
+        growShrinkRoutine = GrowShrink();
+        rectTransformStartScale = rectTransform.localScale;
+        GameManager.MultiplierChanged += OnMultiplierChanged;
         sbMultiplier = new StringBuilder();
     }
     private void OnDisable()
@@ -23,8 +35,32 @@ public class UIMultiplier : MonoBehaviour
 
     private void OnMultiplierChanged(object sender, int mult)
     {
+        currentMultiplier = mult;
         sbMultiplier.Clear();
-        sbMultiplier.Append(charX).Append(mult);
+        sbMultiplier.Append(charX).Append(currentMultiplier);
         multiplierText.text = sbMultiplier.ToString();
+
+        StopCoroutine(growShrinkRoutine);
+        growShrinkRoutine = GrowShrink();
+        StartCoroutine(growShrinkRoutine);
     }
+
+    IEnumerator GrowShrink()
+    {
+        float t = 0.0f;
+        Vector3 startSize = rectTransformStartScale;
+        Vector3 endSize = startSize + Vector3.Lerp(Vector3.zero, Vector3.one, currentMultiplier/(float)magicNumberMaxMultiplier);
+
+        float duration = 0.25f;
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            float progress = animationCurve.Evaluate(t / duration);
+
+            transform.localScale = Vector3.LerpUnclamped(startSize, endSize, progress);
+
+            yield return null;
+        }
+    }
+
 }

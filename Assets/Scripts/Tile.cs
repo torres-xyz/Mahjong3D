@@ -11,18 +11,18 @@ public class Tile : MonoBehaviour
     [SerializeField] List<Material> tileTypeMaterial; //already in the same order as the enum
     [SerializeField] BoxCollider boxCollider;
     [SerializeField] AnimationCurve animationCurve;
-    IEnumerator spinAndShrink;
+    IEnumerator spinAndShrinkRoutine;
     Renderer thisRenderer;
 
     private void Start()
     {
-        spinAndShrink = SpinAndShrink();
+        spinAndShrinkRoutine = SpinAndShrink();
     }
 
     public void Init(TileType type)
     {
-        if (spinAndShrink != null)
-            StopCoroutine(spinAndShrink);
+        if (spinAndShrinkRoutine != null)
+            StopCoroutine(spinAndShrinkRoutine);
 
         if (thisRenderer == null)
             thisRenderer = GetComponent<Renderer>();
@@ -41,9 +41,9 @@ public class Tile : MonoBehaviour
     {
         boxCollider.enabled = false;
 
-        StopCoroutine(spinAndShrink);
-        spinAndShrink = SpinAndShrink();
-        StartCoroutine(spinAndShrink);
+        StopCoroutine(spinAndShrinkRoutine);
+        spinAndShrinkRoutine = SpinAndShrink();
+        StartCoroutine(spinAndShrinkRoutine);
     }
 
     IEnumerator SpinAndShrink()
@@ -60,7 +60,6 @@ public class Tile : MonoBehaviour
             transform.localScale = Vector3.zero;
             float progress = animationCurve.Evaluate( t / duration);
 
-            float yRotation = Mathf.LerpUnclamped(startRotation, endRotation, progress) % 360.0f;
             transform.localScale = new Vector3(
                 Mathf.LerpUnclamped(initialScale.x, 0, progress),
                 Mathf.LerpUnclamped(initialScale.y, 0, progress),
@@ -68,7 +67,7 @@ public class Tile : MonoBehaviour
 
             transform.eulerAngles = new Vector3(
                 transform.eulerAngles.x,
-                yRotation,
+                Mathf.LerpUnclamped(startRotation, endRotation, progress) % 360.0f,
                 transform.eulerAngles.z);
 
             yield return null;
