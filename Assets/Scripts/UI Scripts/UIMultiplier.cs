@@ -7,14 +7,16 @@ using UnityEngine;
 public class UIMultiplier : MonoBehaviour
 {
     private TMP_Text multiplierText;
-    private RectTransform rectTransform;
-    [SerializeField] private AnimationCurve animationCurve;
-    private Vector3 rectTransformStartScale;
-    IEnumerator growShrinkRoutine;
-    private StringBuilder sbMultiplier;
     private readonly string charX = "x";
-    private int currentMultiplier = 1;
+    private StringBuilder sbMultiplier;
+    
+    //Animation Related
+    IEnumerator growShrinkRoutine;
+    private RectTransform rectTransform;
+    private Vector3 rectTransformStartScale;
+    [SerializeField] private AnimationCurve animationCurve;
     private readonly int magicNumberMaxMultiplier = 20;
+    private int currentMultiplier = 1;
 
     private void OnEnable()
     {

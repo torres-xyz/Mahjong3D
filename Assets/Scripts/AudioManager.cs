@@ -1,18 +1,22 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class AudioManager : MonoBehaviour
 {
     [Range(0, 1)]
     [SerializeField] float musicVolume;
     [SerializeField] List<AudioClip> audioClipsList;
+    [SerializeField] AudioMixer audioMixer;
+    [SerializeField] AudioMixerGroup audioMixerGroup;
 
     List<AudioSource> audioSourcePool;
     readonly int audioSourcePoolPreloadAmout = 5;
     AudioSource audioSourcePlayingLoopingMusic;
     private int currentMultiplier;
     private readonly int maxMultiplerGuesstimate = 20;
+    private float currentAudioLevel = 0.5f;
 
     private void Start()
     {
@@ -40,6 +44,8 @@ public class AudioManager : MonoBehaviour
         PlayerControlls.SwippedRightToLeft += OnSpinCamera;
         PlayerControlls.SwippedLeftToRight += OnSpinCamera;
         StartGameButton.LoadMainScene += OnLoadMainScene;
+
+        UIVolumeSlider.VolumeChanged += OnVolumeChanged;
     }
     private void OnDisable()
     {
@@ -60,8 +66,9 @@ public class AudioManager : MonoBehaviour
         PlayerControlls.SwippedRightToLeft -= OnSpinCamera;
         PlayerControlls.SwippedLeftToRight -= OnSpinCamera;
         StartGameButton.LoadMainScene -= OnLoadMainScene;
+        
+        UIVolumeSlider.VolumeChanged += OnVolumeChanged;
     }
-
 
     //Music
     private void OnVictory(object sender, EventArgs e) => PlayLoopingMusic("Victory - New Age Ghost");
@@ -79,6 +86,7 @@ public class AudioManager : MonoBehaviour
     private void OnPlayerFoundTilePair(object sender, (Tile, Tile) e) => PlayAudio("FoundTilePair_V2", MultiplierToPitch(currentMultiplier));
     //Logic
     private void OnMultiplierChanged(object sender, int multi) => currentMultiplier = multi;
+    private void OnVolumeChanged(object sender, float vol) => audioMixer.SetFloat("MainVolume", vol);
 
     private void PlayAudio(string clipToPlay)
     {
@@ -97,7 +105,6 @@ public class AudioManager : MonoBehaviour
 
     private float MultiplierToPitch(int multiplier) => Mathf.Lerp(1, 3, (multiplier - 1) / (float)maxMultiplerGuesstimate); // (multiplier - 1) because the base multiplier is already 1.
 
-
     private void PlayLoopingMusic(string clipToPlay)
     {
         if (audioSourcePlayingLoopingMusic == null)
@@ -115,7 +122,7 @@ public class AudioManager : MonoBehaviour
         audioSourcePool = new List<AudioSource>();
         for (int i = 0; i < audioSourcePoolPreloadAmout; i++)
         {
-            audioSourcePool.Add(gameObject.AddComponent<AudioSource>());
+            audioSourcePool.Add(ExpandAudioPool());
         }
     }
     private AudioSource GetAudioSourceFromPool()
@@ -134,6 +141,7 @@ public class AudioManager : MonoBehaviour
     {
         AudioSource newAudioSource = gameObject.AddComponent<AudioSource>();
         audioSourcePool.Add(newAudioSource);
+        newAudioSource.outputAudioMixerGroup = audioMixerGroup;
         return newAudioSource;
     }
 }
