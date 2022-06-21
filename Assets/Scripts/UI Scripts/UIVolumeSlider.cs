@@ -1,3 +1,4 @@
+//https://johnleonardfrench.com/the-right-way-to-make-a-volume-slider-in-unity-using-logarithmic-conversion/
 using System;
 using UnityEngine;
 

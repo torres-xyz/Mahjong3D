@@ -16,7 +16,7 @@ public class AudioManager : MonoBehaviour
     AudioSource audioSourcePlayingLoopingMusic;
     private int currentMultiplier;
     private readonly int maxMultiplerGuesstimate = 20;
-    private float currentAudioLevel = 0.5f;
+    //private float currentAudioLevel = 0.5f;
 
     private void Start()
     {
