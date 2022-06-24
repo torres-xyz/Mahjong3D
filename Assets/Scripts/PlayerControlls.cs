@@ -45,13 +45,14 @@ public class PlayerControlls : MonoBehaviour
 
     bool CalculateSwipe(bool clickState)
     {
-        if (clickState) //swipe not started
+        if (clickState == true) //swipe not started, mouse is down
         {
             mousePositionAtStartOfSwipe = mousePosition;
             return false;
         }
 
-        if (Vector2.Distance(mousePositionAtStartOfSwipe, mousePosition) < (dragScreenPercentageTraveledThreshold * Screen.width))
+        //Mouse is now up
+        if (Math.Abs(mousePositionAtStartOfSwipe.x - mousePosition.x) < (dragScreenPercentageTraveledThreshold * Screen.width))
             return false; //Swipe distance was too small. Swipe not started
 
         //swipe started

@@ -83,6 +83,7 @@ public class Board : MonoBehaviour
             -boardSize.y * 0.5f + 0.5f - gapBetweenCubes * 1.5f,
             -boardSize.z * 0.5f + 0.5f - gapBetweenCubes * 1.5f);
 
+        //Creating each cube in the board, one forloop for each dimension
         int count = 0;
         for (int i = 0; i < boardSize.x; i++)
         {
