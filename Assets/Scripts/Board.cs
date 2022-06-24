@@ -66,9 +66,11 @@ public class Board : MonoBehaviour
         //Ideally some logic would be applied here to use a reduced number of tile types
         //to make it so we get an even number of leftover tiles.
         if (leftOverTiles % 2 != 0)
-            Debug.LogError("There's an uneven number of leftover tiles.");
+            Debug.LogWarning("There's an uneven number of leftover tiles.");
 
-        tileList = CreateNewBoardFromPool(boardSize, tileRepetitions, leftOverTiles);
+        //tileList = CreateNewBoardFromPool(boardSize, tileRepetitions, leftOverTiles);
+        tileList = CreateNewNonCubicBoardFromPool(boardSize, tileRepetitions, leftOverTiles);
+
         BoardInitialized?.Invoke(this, EventArgs.Empty);
     }
 
@@ -84,7 +86,7 @@ public class Board : MonoBehaviour
             -boardSize.z * 0.5f + 0.5f - gapBetweenCubes * 1.5f);
 
         //Creating each cube in the board, one forloop for each dimension
-        int count = 0;
+        //int count = 0;
         for (int i = 0; i < boardSize.x; i++)
         {
             for (int ii = 0; ii < boardSize.y; ii++)
@@ -102,7 +104,7 @@ public class Board : MonoBehaviour
                     newTile.name = $"Cube {i} {ii} {iii}";
 
                     boardList.Add(newTile);
-                    count++;
+                    //count++;
                 }
             }
         }
@@ -132,6 +134,95 @@ public class Board : MonoBehaviour
         return boardList;
     }
 
+    private List<Tile> CreateNewNonCubicBoardFromPool(Vector3 boardSize, int tileRepetitions, int extraTiles)
+    {
+        //Create the board
+        List<Tile> boardList = new();
+
+        //This will center them perfectly at the origin
+        Vector3 startingPos = new(
+            -boardSize.x * 0.5f + 0.5f - gapBetweenCubes * 1.5f,
+            -boardSize.y * 0.5f + 0.5f - gapBetweenCubes * 1.5f,
+            -boardSize.z * 0.5f + 0.5f - gapBetweenCubes * 1.5f);
+
+        //Board blueprints
+        int[,,] boardBluePrint = new int[5, 5, 5]
+            {
+                {
+                    { 0,0,1,0,0 }, { 0, 1, 1, 1, 0 }, { 1, 1, 1, 1, 1 }, { 0, 1, 1, 1, 0 }, { 0, 0, 1, 0, 0 }
+                },
+                {
+                    { 0,1,1,1,0 }, { 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1 }, { 0, 1, 1, 1, 0 }
+                },
+                {
+                    { 1,1,1,1,1 }, { 1,1,1,1,1 }, { 1, 1, 1, 1, 1 }, { 1,1,1,1,1 }, { 1,1,1,1,1 }
+                },
+                {
+                    { 0,1,1,1,0 }, { 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1 }, { 0, 1, 1, 1, 0 }
+                },
+                {
+                    { 0,0,1,0,0 }, { 0, 1, 1, 1, 0 }, { 1, 1, 1, 1, 1 }, { 0, 1, 1, 1, 0 }, { 0, 0, 1, 0, 0 }
+                },
+            };
+
+
+        //Creating each cube in the board, one forloop for each dimension
+        //int count = 0;
+        for (int i = 0; i < boardSize.x; i++)
+        {
+            for (int ii = 0; ii < boardSize.y; ii++)
+            {
+                for (int iii = 0; iii < boardSize.z; iii++)
+                {
+                    if (boardBluePrint[i, ii, iii] == 0)
+                    {
+                        continue;
+                    }
+
+                    Tile newTile = tileSpawner.GetTile();
+                    newTile.transform.position = startingPos + new Vector3(
+                        i + gapBetweenCubes * i,
+                        ii + gapBetweenCubes * ii,
+                        iii + gapBetweenCubes * iii);
+
+                    newTile.transform.parent = this.transform;
+                    newTile.boardPosition = new Vector3Int(i, ii, iii);
+                    newTile.name = $"Cube {i} {ii} {iii}";
+
+                    boardList.Add(newTile);
+                    //count++;
+                }
+            }
+        }
+
+        boardList = UnityHelperFunctions.Shuffle(boardList);
+        int numberOfTileTypes = Enum.GetNames(typeof(TileType)).Length;
+        int currentBoardIndex = 0;
+        int tileRepetitionsHere = boardList.Count / numberOfTileTypes;
+        for (int i = 0; i < tileRepetitionsHere; i++)
+        {
+            for (int ii = 0; ii < numberOfTileTypes; ii++)
+            {
+                boardList[currentBoardIndex].Init((TileType)ii);
+                currentBoardIndex++;
+            }
+        }
+
+        //Extra tiles
+        TileType extraTileType = (TileType)UnityEngine.Random.Range(0, numberOfTileTypes);
+        int leftOverTiles = boardList.Count % numberOfTileTypes;
+        for (int i = 0; i < leftOverTiles; i++)
+        {
+            //In here we're only adding the same type of tile as extra tiles,
+            //but in a higher difficulty mode, we could spread this more evenly among other types.
+            boardList[currentBoardIndex].Init(extraTileType);
+            currentBoardIndex++;
+        }
+
+        return boardList;
+    }
+
+
     private void OnPlayerFoundTilePair(object sender, (Tile, Tile) tilePair)
     {
         tileList.Remove(tilePair.Item1);
@@ -156,7 +247,7 @@ public class Board : MonoBehaviour
             {
                 ClickedOnAStuckTile?.Invoke(this, EventArgs.Empty);
             }
-        }            
+        }
     }
 
     private bool GetTileFromTransform(Transform clickedTileTrans, out Tile tile)
@@ -171,7 +262,7 @@ public class Board : MonoBehaviour
             }
         }
         return false;
-    }    
+    }
 
     private bool IsTileFree(Tile clickedTile)
     {
@@ -208,5 +299,5 @@ public class Board : MonoBehaviour
             }
         }
         return true;
-    }    
+    }
 }

@@ -2598,7 +2598,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 938df1c180ac177418f2c6a944b87609, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boardSize: {x: 4, y: 4, z: 4}
+  boardSize: {x: 5, y: 5, z: 5}
 --- !u!4 &975104067
 Transform:
   m_ObjectHideFlags: 0
@@ -5311,7 +5311,7 @@ MonoBehaviour:
   m_MinValue: 0.0001
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0.453
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
