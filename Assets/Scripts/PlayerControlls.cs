@@ -16,6 +16,7 @@ public class PlayerControlls : MonoBehaviour
     private Vector2 mousePosition;
     private Vector2 mousePositionAtStartOfSwipe;
     private Camera cam;
+    private Transform lastObjectHitOnPoint;
 
     void Start()
     {
@@ -47,13 +48,13 @@ public class PlayerControlls : MonoBehaviour
     {
         mousePosition = value.Get<Vector2>();
         Transform objHit = RaycastToObject(mousePosition);
-        if (objHit != null)
+        if (objHit != null && objHit != lastObjectHitOnPoint)
         {
             //Debug.Log(objHit.name);
             //Debug.Log(objHit.GetComponent<Tile>().tileType.ToString());
             HoveredTile?.Invoke(this, objHit);
+            lastObjectHitOnPoint = objHit;
         }
-
     }
 
     bool CalculateSwipe(bool clickState)

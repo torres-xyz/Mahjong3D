@@ -6,7 +6,7 @@ using UnityEngine;
 public class Board : MonoBehaviour
 {
     public static EventHandler<Tile> ClickedOnAFreeTile;
-    public static EventHandler ClickedOnAStuckTile;
+    public static EventHandler<Tile> ClickedOnAStuckTile;
     public static EventHandler BoardCleared;
     public static EventHandler BoardInitialized;
 
@@ -245,7 +245,7 @@ public class Board : MonoBehaviour
             }
             else
             {
-                ClickedOnAStuckTile?.Invoke(this, EventArgs.Empty);
+                ClickedOnAStuckTile?.Invoke(this, clickedTile);
             }
         }
     }

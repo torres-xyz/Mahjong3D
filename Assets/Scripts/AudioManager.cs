@@ -43,6 +43,7 @@ public class AudioManager : MonoBehaviour
         ResumeButton.ResumeButtonWasPressed += OnResumeButtonWasClicked;
         PlayerControlls.SwippedRightToLeft += OnSpinCamera;
         PlayerControlls.SwippedLeftToRight += OnSpinCamera;
+        //PlayerControlls.HoveredTile += OnHoveredTile;
         StartGameButton.LoadMainScene += OnLoadMainScene;
 
         UIVolumeSlider.VolumeChanged += OnVolumeChanged;
@@ -65,10 +66,12 @@ public class AudioManager : MonoBehaviour
         ResumeButton.ResumeButtonWasPressed -= OnResumeButtonWasClicked;
         PlayerControlls.SwippedRightToLeft -= OnSpinCamera;
         PlayerControlls.SwippedLeftToRight -= OnSpinCamera;
+        //PlayerControlls.HoveredTile += OnHoveredTile;
         StartGameButton.LoadMainScene -= OnLoadMainScene;
         
         UIVolumeSlider.VolumeChanged += OnVolumeChanged;
     }
+
 
     //Music
     private void OnVictory(object sender, EventArgs e) => PlayLoopingMusic("Victory - New Age Ghost");
@@ -82,8 +85,9 @@ public class AudioManager : MonoBehaviour
     private void OnSpinCamera(object sender, EventArgs e) => PlayAudio("CameraSpin");
     private void OnButtonWasClicked(object sender, EventArgs e) => PlayAudio("ButtonClicked");
     private void OnClickedOnAFreeTile(object sender, Tile e) => PlayAudio("FreeTile");
-    private void OnClickedOnAStuckTile(object sender, EventArgs e) => PlayAudio("StuckTile");
+    private void OnClickedOnAStuckTile(object sender, Tile e) => PlayAudio("StuckTile");
     private void OnPlayerFoundTilePair(object sender, (Tile, Tile) e) => PlayAudio("FoundTilePair_V2", MultiplierToPitch(currentMultiplier));
+    //private void OnHoveredTile(object sender, Transform e) => PlayAudio("click2");
     //Logic
     private void OnMultiplierChanged(object sender, int multi) => currentMultiplier = multi;
     private void OnVolumeChanged(object sender, float vol) => audioMixer.SetFloat("MainVolume", vol);

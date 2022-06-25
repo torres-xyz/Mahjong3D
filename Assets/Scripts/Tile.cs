@@ -13,6 +13,7 @@ public class Tile : MonoBehaviour
     [SerializeField] BoxCollider boxCollider;
     [SerializeField] AnimationCurve animationCurve;
     IEnumerator spinAndShrinkRoutine;
+    IEnumerator shakeRoutine;
     Renderer thisRenderer;
     private bool isDisabling;
 
@@ -25,19 +26,35 @@ public class Tile : MonoBehaviour
     private void OnEnable()
     {
         PlayerControlls.HoveredTile += OnHoveredTile;
+        Board.ClickedOnAStuckTile += OnClickedOnAStuckTile;
     }
     private void OnDisable()
     {
         PlayerControlls.HoveredTile -= OnHoveredTile;
+        Board.ClickedOnAStuckTile -= OnClickedOnAStuckTile;
         
+    }
+    private void Start()
+    {
+        spinAndShrinkRoutine = SpinAndShrink();
+        shakeRoutine = ShakeCoroutine(new Vector3(.15f, .15f, .15f), .05f, .5f);
+    }
+
+    private void OnClickedOnAStuckTile(object sender, Tile tile)
+    {
+        if (tile == this)
+        {
+            StopCoroutine(shakeRoutine);
+            shakeRoutine = ShakeCoroutine(new Vector3(.15f, .15f, .15f), .05f, .5f);
+            StartCoroutine(shakeRoutine);
+        }
     }
 
     private void OnHoveredTile(object sender, Transform trans)
     {
         if (isDisabling == true)
-        {
             return;
-        }
+
         if (trans == transform)
         {
             thisRenderer.material.SetFloat("_AmbientLight", ambientLightValueOnHover);
@@ -46,11 +63,6 @@ public class Tile : MonoBehaviour
         {
             thisRenderer.material.SetFloat("_AmbientLight", initialAmbientLightValue);
         }
-    }
-
-    private void Start()
-    {
-        spinAndShrinkRoutine = SpinAndShrink();
     }
 
     public void Init(TileType type)
@@ -116,5 +128,28 @@ public class Tile : MonoBehaviour
         isDisabling = false;
         //Disable at the end of the anim
         gameObject.SetActive(false);
+    }
+
+
+    private IEnumerator ShakeCoroutine(Vector3 magnitude, float duration, float wavelength)
+    {
+        Vector3 startPos = transform.localPosition;
+        float endTime = Time.time + duration;
+        float currentX = 0;
+
+        while (Time.time < endTime)
+        {
+            Vector3 shakeAmount = new Vector3(
+                Mathf.PerlinNoise(currentX, 0) - .5f,
+                Mathf.PerlinNoise(currentX, 7) - .5f,
+                Mathf.PerlinNoise(currentX, 19) - .5f
+            );
+
+            transform.localPosition = Vector3.Scale(magnitude, shakeAmount) + startPos;
+            currentX += wavelength;
+            yield return null;
+        }
+
+        transform.localPosition = startPos;
     }
 }
