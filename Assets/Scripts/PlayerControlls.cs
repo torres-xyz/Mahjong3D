@@ -6,6 +6,7 @@ public class PlayerControlls : MonoBehaviour
 {
     //Events
     public static EventHandler<Transform> ClickedOnTile;
+    public static EventHandler<Transform> HoveredTile;
     public static EventHandler SwippedRightToLeft;
     public static EventHandler SwippedLeftToRight;
 
@@ -42,6 +43,18 @@ public class PlayerControlls : MonoBehaviour
             ClickedOnTile?.Invoke(this, objHit);
         }
     }
+    void OnPoint(InputValue value)
+    {
+        mousePosition = value.Get<Vector2>();
+        Transform objHit = RaycastToObject(mousePosition);
+        if (objHit != null)
+        {
+            //Debug.Log(objHit.name);
+            //Debug.Log(objHit.GetComponent<Tile>().tileType.ToString());
+            HoveredTile?.Invoke(this, objHit);
+        }
+
+    }
 
     bool CalculateSwipe(bool clickState)
     {
@@ -64,7 +77,6 @@ public class PlayerControlls : MonoBehaviour
         return true;
     }
 
-    void OnPoint(InputValue value) => mousePosition = value.Get<Vector2>();
 
     Transform RaycastToObject(Vector2 mousePos)
     {

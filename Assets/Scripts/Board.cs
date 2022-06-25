@@ -68,8 +68,8 @@ public class Board : MonoBehaviour
         if (leftOverTiles % 2 != 0)
             Debug.LogWarning("There's an uneven number of leftover tiles.");
 
-        //tileList = CreateNewBoardFromPool(boardSize, tileRepetitions, leftOverTiles);
-        tileList = CreateNewNonCubicBoardFromPool(boardSize, tileRepetitions, leftOverTiles);
+        tileList = CreateNewBoardFromPool(boardSize, tileRepetitions, leftOverTiles);
+        //tileList = CreateNewNonCubicBoardFromPool(boardSize, tileRepetitions, leftOverTiles); //TESTING THIS
 
         BoardInitialized?.Invoke(this, EventArgs.Empty);
     }
@@ -155,7 +155,7 @@ public class Board : MonoBehaviour
                     { 0,1,1,1,0 }, { 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1 }, { 0, 1, 1, 1, 0 }
                 },
                 {
-                    { 1,1,1,1,1 }, { 1,1,1,1,1 }, { 1, 1, 1, 1, 1 }, { 1,1,1,1,1 }, { 1,1,1,1,1 }
+                    { 1,1,1,1,1 }, { 1,1,1,1,1 }, { 1, 1, 0, 1, 1 }, { 1,1,1,1,1 }, { 1,1,1,1,1 } //putting a 0 in the center to make this even
                 },
                 {
                     { 0,1,1,1,0 }, { 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1 }, { 0, 1, 1, 1, 0 }

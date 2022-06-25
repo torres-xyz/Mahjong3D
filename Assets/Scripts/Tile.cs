@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,6 +14,39 @@ public class Tile : MonoBehaviour
     [SerializeField] AnimationCurve animationCurve;
     IEnumerator spinAndShrinkRoutine;
     Renderer thisRenderer;
+    private bool isDisabling;
+
+    //Cubes.shader variable that controls shadow intensity
+    //This will be changed to a higher value, making it brighter on mouse hover.
+    private float initialAmbientLightValue;
+    [Range(0, 1)]
+    [SerializeField] private float ambientLightValueOnHover;
+
+    private void OnEnable()
+    {
+        PlayerControlls.HoveredTile += OnHoveredTile;
+    }
+    private void OnDisable()
+    {
+        PlayerControlls.HoveredTile -= OnHoveredTile;
+        
+    }
+
+    private void OnHoveredTile(object sender, Transform trans)
+    {
+        if (isDisabling == true)
+        {
+            return;
+        }
+        if (trans == transform)
+        {
+            thisRenderer.material.SetFloat("_AmbientLight", ambientLightValueOnHover);
+        }
+        else
+        {
+            thisRenderer.material.SetFloat("_AmbientLight", initialAmbientLightValue);
+        }
+    }
 
     private void Start()
     {
@@ -27,12 +61,17 @@ public class Tile : MonoBehaviour
         if (thisRenderer == null)
             thisRenderer = GetComponent<Renderer>();
 
+
         tileType = type;
         thisRenderer.material = tileTypeMaterial[(int)type];
+
+        initialAmbientLightValue = thisRenderer.material.GetFloat("_AmbientLight");
 
         boxCollider.enabled = true;
         transform.localScale = Vector3.one;
         transform.rotation = Quaternion.identity;
+
+        isDisabling = false;
 
         gameObject.SetActive(true);
     }
@@ -51,6 +90,8 @@ public class Tile : MonoBehaviour
         float t = 0.0f;
         float startRotation = transform.eulerAngles.y;
         float endRotation = startRotation + 180.0f;
+
+        isDisabling = true;
 
         Vector3 initialScale = transform.localScale;
         float duration = 0.25f;
@@ -72,6 +113,7 @@ public class Tile : MonoBehaviour
 
             yield return null;
         }
+        isDisabling = false;
         //Disable at the end of the anim
         gameObject.SetActive(false);
     }

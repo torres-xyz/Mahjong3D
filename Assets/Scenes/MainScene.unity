@@ -2598,7 +2598,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 938df1c180ac177418f2c6a944b87609, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boardSize: {x: 5, y: 5, z: 5}
+  boardSize: {x: 4, y: 4, z: 4}
 --- !u!4 &975104067
 Transform:
   m_ObjectHideFlags: 0
