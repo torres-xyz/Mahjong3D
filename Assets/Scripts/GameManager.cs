@@ -40,7 +40,8 @@ public class GameManager : MonoBehaviour
         PauseButton.PauseButtonWasPressed += OnPause;
         InstructionsButton.InstructionsButtonWasPressed += OnInstructions;
         ResumeButton.ResumeButtonWasPressed += OnResume;
-        RestartGameButton.RestartGameButtonPressed += RestartGame;
+        UIRestartGameButton.RestartGameButtonPressed += RestartGame;
+        UINextLevelButton.NextLevelButtonPressed += OnNextLevelButtonPressed;
     }
     private void OnDisable()
     {
@@ -51,8 +52,11 @@ public class GameManager : MonoBehaviour
         PauseButton.PauseButtonWasPressed -= OnPause;
         InstructionsButton.InstructionsButtonWasPressed -= OnInstructions;
         ResumeButton.ResumeButtonWasPressed -= OnResume;
-        RestartGameButton.RestartGameButtonPressed -= RestartGame;
+        UIRestartGameButton.RestartGameButtonPressed -= RestartGame;
+        UINextLevelButton.NextLevelButtonPressed -= OnNextLevelButtonPressed;
     }
+
+    
 
     private void Start()
     {
@@ -117,9 +121,16 @@ public class GameManager : MonoBehaviour
         SwitchCanvas?.Invoke(this, "Canvas - Instructions");
     }
     private void OnBoardCleared(object sender, EventArgs e)
-    {
-        //Load next Level
+    {        
         currentLevel++;
+        SwitchCanvas?.Invoke(this, "Canvas - Level Cleared");        
+    }
+
+    private void OnNextLevelButtonPressed(object sender, EventArgs e)
+    {
+        //Turning on Main Canvas
+        SwitchCanvas?.Invoke(this, "Canvas - In Game");
+        //Load next Level
         LoadLevel?.Invoke(this, currentLevel);
     }
 

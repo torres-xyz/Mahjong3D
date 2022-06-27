@@ -864,7 +864,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameDurationInSeconds: 300
   multiplierSecondsLimit: 3
-  startingLevel: 2
+  startingLevel: 1
 --- !u!1 &1509165166
 GameObject:
   m_ObjectHideFlags: 0

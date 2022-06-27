@@ -37,8 +37,8 @@ public class AudioManager : MonoBehaviour
         PauseButton.PauseButtonWasPressed += OnPauseButtonWasClicked;
         InstructionsButton.InstructionsButtonWasPressed += OnButtonWasClicked;
         InstructionsButton.InstructionsButtonWasPressed += OnPauseButtonWasClicked;
-        RestartGameButton.RestartGameButtonPressed += OnButtonWasClicked;
-        RestartGameButton.RestartGameButtonPressed += OnRestartGame;
+        UIRestartGameButton.RestartGameButtonPressed += OnButtonWasClicked;
+        UIRestartGameButton.RestartGameButtonPressed += OnRestartGame;
         ResumeButton.ResumeButtonWasPressed += OnButtonWasClicked;
         ResumeButton.ResumeButtonWasPressed += OnResumeButtonWasClicked;
         PlayerControlls.SwippedRightToLeft += OnSpinCamera;
@@ -60,8 +60,8 @@ public class AudioManager : MonoBehaviour
         PauseButton.PauseButtonWasPressed -= OnPauseButtonWasClicked;
         InstructionsButton.InstructionsButtonWasPressed -= OnButtonWasClicked;
         InstructionsButton.InstructionsButtonWasPressed -= OnPauseButtonWasClicked;
-        RestartGameButton.RestartGameButtonPressed -= OnButtonWasClicked;
-        RestartGameButton.RestartGameButtonPressed -= OnRestartGame;
+        UIRestartGameButton.RestartGameButtonPressed -= OnButtonWasClicked;
+        UIRestartGameButton.RestartGameButtonPressed -= OnRestartGame;
         ResumeButton.ResumeButtonWasPressed -= OnButtonWasClicked;
         ResumeButton.ResumeButtonWasPressed -= OnResumeButtonWasClicked;
         PlayerControlls.SwippedRightToLeft -= OnSpinCamera;

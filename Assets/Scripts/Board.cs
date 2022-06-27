@@ -25,14 +25,14 @@ public class Board : MonoBehaviour
         GameManager.LoadLevel += OnLoadLevel;
         GameManager.PlayerFoundTilePair += OnPlayerFoundTilePair;
         PlayerControlls.ClickedOnTile += OnClickedOnTile;
-        RestartGameButton.RestartGameButtonPressed += OnRestartGame;
+        UIRestartGameButton.RestartGameButtonPressed += OnRestartGame;
     }
     private void OnDisable()
     {
         GameManager.LoadLevel -= OnLoadLevel;
         GameManager.PlayerFoundTilePair -= OnPlayerFoundTilePair;
         PlayerControlls.ClickedOnTile -= OnClickedOnTile;
-        RestartGameButton.RestartGameButtonPressed -= OnRestartGame;
+        UIRestartGameButton.RestartGameButtonPressed -= OnRestartGame;
     }
     void Awake()
     {
@@ -48,6 +48,11 @@ public class Board : MonoBehaviour
 
     private void OnRestartGame(object sender, EventArgs e)
     {
+        ReleaseAllTilesInPool();
+    }
+
+    private void ReleaseAllTilesInPool()
+    {
         if (tileList != null)
         {
             foreach (var item in tileList)
@@ -56,6 +61,7 @@ public class Board : MonoBehaviour
             }
         }
     }
+
     private void InitializeBoard(GameLevel level)
     {
 #if UNITY_EDITOR
@@ -83,12 +89,15 @@ public class Board : MonoBehaviour
         if (totalCubes == 0)
             Debug.LogError("Board size has a 0 dimension");
 
+        if (totalCubes / level.GetTileTypesInLevel().Length % 2 != 0 )
+            Debug.LogError($"There's an uneven number of tile repetitions. Tile repetitions = {totalCubes / level.GetTileTypesInLevel().Length}");
+
         int leftOverTiles = totalCubes % level.GetTileTypesInLevel().Length;
         if (leftOverTiles % 2 != 0)
             Debug.LogError($"There's an uneven number of leftover tiles. Total cubes = {totalCubes}");
         //End of checks
 #endif
-
+        ReleaseAllTilesInPool();
         tileList = CreateNewBoardFromLevel(level);
         BoardInitialized?.Invoke(this, EventArgs.Empty); //Change this to say which level was initialized
     }
@@ -140,6 +149,7 @@ public class Board : MonoBehaviour
         int numberOfTileTypes = level.GetTileTypesInLevel().Length;
 
         int currentBoardIndex = 0;
+        //tileRepetitions has to be pair
         int tileRepetitionsHere = boardList.Count / numberOfTileTypes;
         for (int i = 0; i < tileRepetitionsHere; i++)
         {
@@ -153,6 +163,8 @@ public class Board : MonoBehaviour
         //Extra tiles
         TileType extraTileType = level.GetTileTypesInLevel()[UnityEngine.Random.Range(0, level.GetTileTypesInLevel().Length)];
         int leftOverTiles = boardList.Count % numberOfTileTypes;
+        Debug.Log($"extraTileType = {extraTileType}");
+        Debug.Log($"leftOverTiles  = {leftOverTiles}");
         for (int i = 0; i < leftOverTiles; i++)
         {
             //In here we're only adding the same type of tile as extra tiles,
