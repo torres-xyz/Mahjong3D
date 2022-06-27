@@ -7,36 +7,47 @@ public class Board : MonoBehaviour
 {
     public static EventHandler<Tile> ClickedOnAFreeTile;
     public static EventHandler<Tile> ClickedOnAStuckTile;
-    public static EventHandler BoardCleared;
     public static EventHandler BoardInitialized;
+    public static EventHandler BoardCleared;
+    public static EventHandler FinalBoardCleared;
 
-    [SerializeField] private Vector3Int boardSize;
+    //[SerializeField] private Vector3Int boardSize;
     private readonly float gapBetweenCubes = 0.1f;
     private TileSpawner tileSpawner;
     private List<Tile> tileList;
 
+    //Levels
+    private readonly GameLevel[] availableLevels = { new Level01(), new Level02(), new Level03() };
+    private int currentLevel;
+
     private void OnEnable()
     {
-        PlayerControlls.ClickedOnTile += OnClickedOnTile;
+        GameManager.LoadLevel += OnLoadLevel;
         GameManager.PlayerFoundTilePair += OnPlayerFoundTilePair;
-        RestartGameButton.RestartGameButtonPressed += RestartBoard;
+        PlayerControlls.ClickedOnTile += OnClickedOnTile;
+        RestartGameButton.RestartGameButtonPressed += OnRestartGame;
     }
     private void OnDisable()
     {
-        PlayerControlls.ClickedOnTile -= OnClickedOnTile;
+        GameManager.LoadLevel -= OnLoadLevel;
         GameManager.PlayerFoundTilePair -= OnPlayerFoundTilePair;
-        RestartGameButton.RestartGameButtonPressed -= RestartBoard;
+        PlayerControlls.ClickedOnTile -= OnClickedOnTile;
+        RestartGameButton.RestartGameButtonPressed -= OnRestartGame;
     }
-    void Start()
+    void Awake()
     {
         tileSpawner = FindObjectOfType<TileSpawner>();
         if (tileSpawner == null) Debug.LogError("TileSpawner not found.");
-
-        InitializeBoard();
     }
-    private void RestartBoard(object sender, EventArgs e)
+
+    private void OnLoadLevel(object sender, int level)
     {
-        //Debug.Log("Restarting board");
+        currentLevel = level;
+        InitializeBoard(availableLevels[level - 1]);
+    }
+
+    private void OnRestartGame(object sender, EventArgs e)
+    {
         if (tileList != null)
         {
             foreach (var item in tileList)
@@ -44,100 +55,52 @@ public class Board : MonoBehaviour
                 tileSpawner.ReleaseTile(item);
             }
         }
-
-        InitializeBoard();
     }
-
-    private void InitializeBoard()
+    private void InitializeBoard(GameLevel level)
     {
-        //Determine how many of each cube will go into the board.
-        //4 * 4 * 4 = 64. 64 / 6 = 10.666...
-        int totalCubes = boardSize.x * boardSize.y * boardSize.z;
-        if (totalCubes == 0)
-            Debug.LogError("Board size has a 0 dimension");
+#if UNITY_EDITOR
 
-        int numberOfTileTypes = Enum.GetNames(typeof(TileType)).Length;
-        int tileRepetitions = totalCubes / numberOfTileTypes;
-        int leftOverTiles = totalCubes % numberOfTileTypes;
-
-        //Debug.Log($"There are {totalCubes} total Cubes. With {cubeTypes.Count} different tiles. " +
-        //    $"So, each tile repeates {tileRepetitions} times. With one type having an extra {leftOverTiles} tiles.");
-
-        //Ideally some logic would be applied here to use a reduced number of tile types
-        //to make it so we get an even number of leftover tiles.
-        if (leftOverTiles % 2 != 0)
-            Debug.LogWarning("There's an uneven number of leftover tiles.");
-
-        tileList = CreateNewBoardFromPool(boardSize, tileRepetitions, leftOverTiles);
-        //tileList = CreateNewNonCubicBoardFromPool(boardSize, tileRepetitions, leftOverTiles); //TESTING THIS
-
-        BoardInitialized?.Invoke(this, EventArgs.Empty);
-    }
-
-    private List<Tile> CreateNewBoardFromPool(Vector3 boardSize, int tileRepetitions, int extraTiles)
-    {
-        //Create the board
-        List<Tile> boardList = new();
-
-        //This will center them perfectly at the origin
-        Vector3 startingPos = new(
-            -boardSize.x * 0.5f + 0.5f - gapBetweenCubes * 1.5f,
-            -boardSize.y * 0.5f + 0.5f - gapBetweenCubes * 1.5f,
-            -boardSize.z * 0.5f + 0.5f - gapBetweenCubes * 1.5f);
-
-        //Creating each cube in the board, one forloop for each dimension
-        //int count = 0;
+        //Making sure there's no problems with the level
+        int totalCubes = 0;
+        Vector3 boardSize = new Vector3(
+            level.GetLevel().GetLength(0),
+            level.GetLevel().GetLength(1),
+            level.GetLevel().GetLength(2));
         for (int i = 0; i < boardSize.x; i++)
         {
             for (int ii = 0; ii < boardSize.y; ii++)
             {
                 for (int iii = 0; iii < boardSize.z; iii++)
                 {
-                    Tile newTile = tileSpawner.GetTile();
-                    newTile.transform.position = startingPos + new Vector3(
-                        i + gapBetweenCubes * i,
-                        ii + gapBetweenCubes * ii,
-                        iii + gapBetweenCubes * iii);
-
-                    newTile.transform.parent = this.transform;
-                    newTile.boardPosition = new Vector3Int(i, ii, iii);
-                    newTile.name = $"Cube {i} {ii} {iii}";
-
-                    boardList.Add(newTile);
-                    //count++;
+                    if (level.GetLevel()[i, ii, iii] == 1)
+                    {
+                        totalCubes++;
+                    }
                 }
             }
         }
 
-        boardList = UnityHelperFunctions.Shuffle(boardList);
-        int numberOfTileTypes = Enum.GetNames(typeof(TileType)).Length;
-        int currentBoardIndex = 0;
-        for (int i = 0; i < tileRepetitions; i++)
-        {
-            for (int ii = 0; ii < numberOfTileTypes; ii++)
-            {
-                boardList[currentBoardIndex].Init((TileType)ii);
-                currentBoardIndex++;
-            }
-        }
+        if (totalCubes == 0)
+            Debug.LogError("Board size has a 0 dimension");
 
-        //Extra tiles
-        TileType extraTileType = (TileType)UnityEngine.Random.Range(0, numberOfTileTypes);
-        for (int i = 0; i < extraTiles; i++)
-        {
-            //In here we're only adding the same type of tile as extra tiles,
-            //but in a higher difficulty mode, we could spread this more evenly among other types.
-            boardList[currentBoardIndex].Init(extraTileType);
-            currentBoardIndex++;
-        }
+        int leftOverTiles = totalCubes % level.GetTileTypesInLevel().Length;
+        if (leftOverTiles % 2 != 0)
+            Debug.LogError($"There's an uneven number of leftover tiles. Total cubes = {totalCubes}");
+        //End of checks
+#endif
 
-        return boardList;
+        tileList = CreateNewBoardFromLevel(level);
+        BoardInitialized?.Invoke(this, EventArgs.Empty); //Change this to say which level was initialized
     }
-
-    private List<Tile> CreateNewNonCubicBoardFromPool(Vector3 boardSize, int tileRepetitions, int extraTiles)
+    private List<Tile> CreateNewBoardFromLevel(GameLevel level)
     {
         //Create the board
         List<Tile> boardList = new();
+
+        Vector3 boardSize = new Vector3(
+            level.GetLevel().GetLength(0),
+            level.GetLevel().GetLength(1),
+            level.GetLevel().GetLength(2));
 
         //This will center them perfectly at the origin
         Vector3 startingPos = new(
@@ -145,36 +108,15 @@ public class Board : MonoBehaviour
             -boardSize.y * 0.5f + 0.5f - gapBetweenCubes * 1.5f,
             -boardSize.z * 0.5f + 0.5f - gapBetweenCubes * 1.5f);
 
-        //Board blueprints
-        int[,,] boardBluePrint = new int[5, 5, 5]
-            {
-                {
-                    { 0,0,1,0,0 }, { 0, 1, 1, 1, 0 }, { 1, 1, 1, 1, 1 }, { 0, 1, 1, 1, 0 }, { 0, 0, 1, 0, 0 }
-                },
-                {
-                    { 0,1,1,1,0 }, { 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1 }, { 0, 1, 1, 1, 0 }
-                },
-                {
-                    { 1,1,1,1,1 }, { 1,1,1,1,1 }, { 1, 1, 0, 1, 1 }, { 1,1,1,1,1 }, { 1,1,1,1,1 } //putting a 0 in the center to make this even
-                },
-                {
-                    { 0,1,1,1,0 }, { 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1 }, { 0, 1, 1, 1, 0 }
-                },
-                {
-                    { 0,0,1,0,0 }, { 0, 1, 1, 1, 0 }, { 1, 1, 1, 1, 1 }, { 0, 1, 1, 1, 0 }, { 0, 0, 1, 0, 0 }
-                },
-            };
-
 
         //Creating each cube in the board, one forloop for each dimension
-        //int count = 0;
         for (int i = 0; i < boardSize.x; i++)
         {
             for (int ii = 0; ii < boardSize.y; ii++)
             {
                 for (int iii = 0; iii < boardSize.z; iii++)
                 {
-                    if (boardBluePrint[i, ii, iii] == 0)
+                    if (level.GetLevel()[i, ii, iii] == 0)
                     {
                         continue;
                     }
@@ -187,29 +129,29 @@ public class Board : MonoBehaviour
 
                     newTile.transform.parent = this.transform;
                     newTile.boardPosition = new Vector3Int(i, ii, iii);
-                    newTile.name = $"Cube {i} {ii} {iii}";
+                    newTile.name = $"Cube ({i}, {ii}, {iii})";
 
                     boardList.Add(newTile);
-                    //count++;
                 }
             }
         }
 
         boardList = UnityHelperFunctions.Shuffle(boardList);
-        int numberOfTileTypes = Enum.GetNames(typeof(TileType)).Length;
+        int numberOfTileTypes = level.GetTileTypesInLevel().Length;
+
         int currentBoardIndex = 0;
         int tileRepetitionsHere = boardList.Count / numberOfTileTypes;
         for (int i = 0; i < tileRepetitionsHere; i++)
         {
             for (int ii = 0; ii < numberOfTileTypes; ii++)
             {
-                boardList[currentBoardIndex].Init((TileType)ii);
+                boardList[currentBoardIndex].Init(level.GetTileTypesInLevel()[ii]);
                 currentBoardIndex++;
             }
         }
 
         //Extra tiles
-        TileType extraTileType = (TileType)UnityEngine.Random.Range(0, numberOfTileTypes);
+        TileType extraTileType = level.GetTileTypesInLevel()[UnityEngine.Random.Range(0, level.GetTileTypesInLevel().Length)];
         int leftOverTiles = boardList.Count % numberOfTileTypes;
         for (int i = 0; i < leftOverTiles; i++)
         {
@@ -222,7 +164,6 @@ public class Board : MonoBehaviour
         return boardList;
     }
 
-
     private void OnPlayerFoundTilePair(object sender, (Tile, Tile) tilePair)
     {
         tileList.Remove(tilePair.Item1);
@@ -231,8 +172,17 @@ public class Board : MonoBehaviour
         tileSpawner.ReleaseTile(tilePair.Item1);
         tileSpawner.ReleaseTile(tilePair.Item2);
 
-        if (tileList.Count == 0) //Win Game
-            BoardCleared?.Invoke(this, EventArgs.Empty);
+        if (tileList.Count == 0)
+        {
+            if (currentLevel == availableLevels.Length - 1)
+            {
+                FinalBoardCleared?.Invoke(this, EventArgs.Empty);
+            }
+            else
+            {
+                BoardCleared?.Invoke(this, EventArgs.Empty);
+            }
+        }
     }
 
     private void OnClickedOnTile(object sender, Transform clickedTrans)

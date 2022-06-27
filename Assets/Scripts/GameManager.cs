@@ -12,17 +12,20 @@ public class GameManager : MonoBehaviour
     public static EventHandler<int> MultiplierChanged;
     public static EventHandler TimeOutGameOver;
     public static EventHandler Victory;
+    public static EventHandler<int> LoadLevel;
 
     [Header("Gameplay Variables")]
     [SerializeField] private int gameDurationInSeconds;
     [Tooltip("Number of seconds until combo multiplier is reset.")]
     [SerializeField] private int multiplierSecondsLimit;
 
+    //Levels
+    private int currentLevel;
+    [SerializeField] private int startingLevel; //FOR TESTING ONLY
+
     private int timeLeft;
     private int score;
     private int multiplier;
-    private int currentLevel;
-    [SerializeField] private int numOfAvailableLevels;
     private readonly int scoreAwardedPerTilePair = 100;
     private float timeOfLastTileMatch;
     private Tile lastSelectedTile;
@@ -31,8 +34,9 @@ public class GameManager : MonoBehaviour
     private void OnEnable()
     {
         Board.ClickedOnAFreeTile += OnClickedOnFreeTile;
-        Board.BoardCleared += OnBoardCleared;
         Board.BoardInitialized += OnBoardInitialized;
+        Board.BoardCleared += OnBoardCleared;
+        Board.FinalBoardCleared += OnFinalBoardCleared;
         PauseButton.PauseButtonWasPressed += OnPause;
         InstructionsButton.InstructionsButtonWasPressed += OnInstructions;
         ResumeButton.ResumeButtonWasPressed += OnResume;
@@ -41,8 +45,9 @@ public class GameManager : MonoBehaviour
     private void OnDisable()
     {
         Board.ClickedOnAFreeTile -= OnClickedOnFreeTile;
-        Board.BoardCleared -= OnBoardCleared;
         Board.BoardInitialized -= OnBoardInitialized;
+        Board.BoardCleared -= OnBoardCleared;
+        Board.FinalBoardCleared -= OnFinalBoardCleared;
         PauseButton.PauseButtonWasPressed -= OnPause;
         InstructionsButton.InstructionsButtonWasPressed -= OnInstructions;
         ResumeButton.ResumeButtonWasPressed -= OnResume;
@@ -63,14 +68,17 @@ public class GameManager : MonoBehaviour
         SwitchCanvas?.Invoke(this, "Canvas - In Game");
 
         score = 0;
-        currentLevel = 1;
+        //currentLevel = 1;
+        currentLevel = startingLevel;
         multiplier = 1;
         ScoreChanged?.Invoke(this, score);
         MultiplierChanged?.Invoke(this, multiplier);
 
         lastSelectedTile = null;
         timeLeft = gameDurationInSeconds;
-        TimeLeftChanged?.Invoke(this, timeLeft);        
+        TimeLeftChanged?.Invoke(this, timeLeft);
+
+        LoadLevel?.Invoke(this, currentLevel);
     }
 
     private void StartGameTimer()
@@ -111,13 +119,15 @@ public class GameManager : MonoBehaviour
     private void OnBoardCleared(object sender, EventArgs e)
     {
         //Load next Level
-
-        GameOver(victory: true);
-
+        currentLevel++;
+        LoadLevel?.Invoke(this, currentLevel);
     }
-    
-    
-    
+
+    private void OnFinalBoardCleared(object sender, EventArgs e)
+    {
+        GameOver(victory: true);
+    }
+
     private void GameOver(bool victory)
     {
         SwitchCanvas?.Invoke(this, "none");

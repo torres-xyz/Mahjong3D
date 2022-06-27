@@ -5,5 +5,8 @@ public enum TileType
     Parrot,
     Penguin,
     Pig,
-    Snake
+    Snake,
+    Chick,
+    Gorilla,
+    Elephant
 }

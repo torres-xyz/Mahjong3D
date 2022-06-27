@@ -119,6 +119,9 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 031f02fe5ae30c54d8b2815348c6bc67, type: 2}
   - {fileID: 2100000, guid: fc9634950dcdd8243ac6c40d19e556cb, type: 2}
   - {fileID: 2100000, guid: 48f70ac398670b64a8e3519ae0a1b31b, type: 2}
+  - {fileID: 2100000, guid: 031d2504d0078944e9f6394f0afd9097, type: 2}
+  - {fileID: 2100000, guid: f556807dc43e8e043b91e0102c7002bd, type: 2}
+  - {fileID: 2100000, guid: 9c5cf3eb75327e245be4b0c637b4faa3, type: 2}
   boxCollider: {fileID: 5716363169469952249}
   animationCurve:
     serializedVersion: 2

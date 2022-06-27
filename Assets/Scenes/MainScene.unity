@@ -2495,6 +2495,9 @@ MonoBehaviour:
   - {fileID: 2800000, guid: f0fbf3c36bba3d24e9b8f238a3d2b834, type: 3}
   - {fileID: 2800000, guid: e05a1f77c45d1224482f8f2783d2a8ed, type: 3}
   - {fileID: 2800000, guid: 465c4018112f0b64791adb2692688a08, type: 3}
+  - {fileID: 2800000, guid: 58b60332e55c7a94b896c2b8abac3a7f, type: 3}
+  - {fileID: 2800000, guid: 5a23563cd17d7a64da57678059f016fd, type: 3}
+  - {fileID: 2800000, guid: f572f7cb23a2876488ecbe73411c1a00, type: 3}
   image: {fileID: 931122039}
 --- !u!114 &931122039
 MonoBehaviour:
@@ -2598,7 +2601,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 938df1c180ac177418f2c6a944b87609, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boardSize: {x: 4, y: 4, z: 4}
 --- !u!4 &975104067
 Transform:
   m_ObjectHideFlags: 0

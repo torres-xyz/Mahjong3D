@@ -1,25 +1,22 @@
 public class Level01 : GameLevel
 {
-    public override int[,,] GetLevel() => new int[5, 5, 5]
+    private readonly int[,,] level = new int[4, 4, 4] //Solid cube, all 1s
     {
         {
-            { 0,0,1,0,0 }, { 0, 1, 1, 1, 0 }, { 1, 1, 1, 1, 1 }, { 0, 1, 1, 1, 0 }, { 0, 0, 1, 0, 0 }
+            { 1, 1, 1, 1 },{ 1, 1, 1, 1 },{ 1, 1, 1, 1 },{ 1, 1, 1, 1 }
         },
         {
-            { 0,1,1,1,0 }, { 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1 }, { 0, 1, 1, 1, 0 }
+            { 1, 1, 1, 1 },{ 1, 1, 1, 1 },{ 1, 1, 1, 1 },{ 1, 1, 1, 1 }
         },
         {
-            { 1,1,1,1,1 }, { 1,1,1,1,1 }, { 1, 1, 0, 1, 1 }, { 1,1,1,1,1 }, { 1,1,1,1,1 } //putting a 0 in the center to make this even
+            { 1, 1, 1, 1 },{ 1, 1, 1, 1 },{ 1, 1, 1, 1 },{ 1, 1, 1, 1 }
         },
         {
-            { 0,1,1,1,0 }, { 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1 }, { 0, 1, 1, 1, 0 }
-        },
-        {
-            { 0,0,1,0,0 }, { 0, 1, 1, 1, 0 }, { 1, 1, 1, 1, 1 }, { 0, 1, 1, 1, 0 }, { 0, 0, 1, 0, 0 }
+            { 1, 1, 1, 1 },{ 1, 1, 1, 1 },{ 1, 1, 1, 1 },{ 1, 1, 1, 1 }
         },
     };
 
-    public override TileType[] GetTileTypesInLevel() => new TileType[]
+    private readonly TileType[] typesInLevel = new TileType[]
     {
         TileType.Owl,
         TileType.Panda,
@@ -28,4 +25,7 @@ public class Level01 : GameLevel
         TileType.Pig,
         TileType.Snake
     };
+
+    public override int[,,] GetLevel() => level;
+    public override TileType[] GetTileTypesInLevel() => typesInLevel;
 }
