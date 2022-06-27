@@ -21,6 +21,8 @@ public class GameManager : MonoBehaviour
     private int timeLeft;
     private int score;
     private int multiplier;
+    private int currentLevel;
+    [SerializeField] private int numOfAvailableLevels;
     private readonly int scoreAwardedPerTilePair = 100;
     private float timeOfLastTileMatch;
     private Tile lastSelectedTile;
@@ -61,6 +63,7 @@ public class GameManager : MonoBehaviour
         SwitchCanvas?.Invoke(this, "Canvas - In Game");
 
         score = 0;
+        currentLevel = 1;
         multiplier = 1;
         ScoreChanged?.Invoke(this, score);
         MultiplierChanged?.Invoke(this, multiplier);
@@ -105,7 +108,16 @@ public class GameManager : MonoBehaviour
 
         SwitchCanvas?.Invoke(this, "Canvas - Instructions");
     }
-    private void OnBoardCleared(object sender, EventArgs e) => GameOver(victory: true);
+    private void OnBoardCleared(object sender, EventArgs e)
+    {
+        //Load next Level
+
+        GameOver(victory: true);
+
+    }
+    
+    
+    
     private void GameOver(bool victory)
     {
         SwitchCanvas?.Invoke(this, "none");
