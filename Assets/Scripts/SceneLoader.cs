@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class SceneLoader : MonoBehaviour
 {
     [SerializeField] Canvas loadingCanvas;
+    public static EventHandler<string> SceneFinishedLoading;
 
     private void OnEnable()
     {
@@ -26,7 +27,7 @@ public class SceneLoader : MonoBehaviour
     void Start()
     {
 #if UNITY_EDITOR
-        return;
+        //return;
 #endif
 
         //Only load intro scene at start if the Base Scene is the active scene.
@@ -44,5 +45,6 @@ public class SceneLoader : MonoBehaviour
             yield return null;
         }
         loadingCanvas.enabled = false;
+        SceneFinishedLoading?.Invoke(this, sceneName);
     }
 }

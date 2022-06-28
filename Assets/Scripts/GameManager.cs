@@ -42,6 +42,7 @@ public class GameManager : MonoBehaviour
         ResumeButton.ResumeButtonWasPressed += OnResume;
         UIRestartGameButton.RestartGameButtonPressed += RestartGame;
         UINextLevelButton.NextLevelButtonPressed += OnNextLevelButtonPressed;
+        SceneLoader.SceneFinishedLoading += OnSceneFinishedLoading;
     }
     private void OnDisable()
     {
@@ -54,14 +55,21 @@ public class GameManager : MonoBehaviour
         ResumeButton.ResumeButtonWasPressed -= OnResume;
         UIRestartGameButton.RestartGameButtonPressed -= RestartGame;
         UINextLevelButton.NextLevelButtonPressed -= OnNextLevelButtonPressed;
+        SceneLoader.SceneFinishedLoading -= OnSceneFinishedLoading;
     }
 
-    
-
-    private void Start()
+    private void OnSceneFinishedLoading(object sender, string sceneName)
     {
-        SetupGame();
+        if (sceneName == "MainScene")
+        {
+            SetupGame();
+        }
     }
+
+    //private void Start()
+    //{
+    //    SetupGame();
+    //}
 
     private void RestartGame(object sender, EventArgs e) => SetupGame();
     private void OnBoardInitialized(object sender, GameLevel e) => StartGameTimer();
