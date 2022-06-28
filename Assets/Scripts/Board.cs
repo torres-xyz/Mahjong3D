@@ -26,14 +26,12 @@ public class Board : MonoBehaviour
         GameManager.LoadLevel += OnLoadLevel;
         GameManager.PlayerFoundTilePair += OnPlayerFoundTilePair;
         PlayerControlls.ClickedOnTile += OnClickedOnTile;
-        UIRestartGameButton.RestartGameButtonPressed += OnRestartGame;
     }
     private void OnDisable()
     {
         GameManager.LoadLevel -= OnLoadLevel;
         GameManager.PlayerFoundTilePair -= OnPlayerFoundTilePair;
         PlayerControlls.ClickedOnTile -= OnClickedOnTile;
-        UIRestartGameButton.RestartGameButtonPressed -= OnRestartGame;
     }
     void Awake()
     {
@@ -46,12 +44,6 @@ public class Board : MonoBehaviour
         currentLevel = level;
         InitializeBoard(availableLevels[level - 1]);
     }
-
-    private void OnRestartGame(object sender, EventArgs e)
-    {
-        ReleaseAllTilesInPool();
-    }
-
     private void ReleaseAllTilesInPool()
     {
         if (tileList != null)
@@ -177,8 +169,8 @@ public class Board : MonoBehaviour
             leftOverTiles += numberOfTileTypes;
         }
 
-        Debug.Log($"extraTileType = {extraTileType}");
-        Debug.Log($"leftOverTiles  = {leftOverTiles}");
+        //Debug.Log($"extraTileType = {extraTileType}");
+        //Debug.Log($"leftOverTiles  = {leftOverTiles}");
 
 
         //Figuring out the best distribution for left over tiles
@@ -201,22 +193,22 @@ public class Board : MonoBehaviour
 
 
         //Debug
-        for (int i = 0; i < level.GetTileTypesInLevel().Length; i++)
-        {
-            int count = 0;
-            for (int ii = 0; ii < boardList.Count; ii++)
-            {
-                if (boardList[ii].tileType == level.GetTileTypesInLevel()[i])
-                {
-                    count++;
-                }
-            }
-            Debug.Log($"There are {count} tiles of type {level.GetTileTypesInLevel()[i]}");
-            if (count % 2 != 0)
-            {
-                Debug.LogError($"There's an uneven number of tiles of type {level.GetTileTypesInLevel()[i]}");
-            }
-        }
+        //for (int i = 0; i < level.GetTileTypesInLevel().Length; i++)
+        //{
+        //    int count = 0;
+        //    for (int ii = 0; ii < boardList.Count; ii++)
+        //    {
+        //        if (boardList[ii].tileType == level.GetTileTypesInLevel()[i])
+        //        {
+        //            count++;
+        //        }
+        //    }
+        //    Debug.Log($"There are {count} tiles of type {level.GetTileTypesInLevel()[i]}");
+        //    if (count % 2 != 0)
+        //    {
+        //        Debug.LogError($"There's an uneven number of tiles of type {level.GetTileTypesInLevel()[i]}");
+        //    }
+        //}
         return boardList;
     }
 
