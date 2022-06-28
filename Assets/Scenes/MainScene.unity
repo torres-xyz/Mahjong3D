@@ -2618,7 +2618,7 @@ GameObject:
   - component: {fileID: 855774664}
   - component: {fileID: 855774667}
   m_Layer: 5
-  m_Name: TryAgain Button
+  m_Name: PlayAgain Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4922,7 +4922,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scoreText: {fileID: 1657626006}
-  message: 'Your final is '
+  message: 'Your score is '
 --- !u!114 &1657626006
 MonoBehaviour:
   m_ObjectHideFlags: 0

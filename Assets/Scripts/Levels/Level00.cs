@@ -1,18 +1,28 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class Level00 : MonoBehaviour
+public class Level00 : GameLevel
 {
-    // Start is called before the first frame update
-    void Start()
+    private readonly int[,,] level = new int[3, 3, 3] //3*3*3 = 27, so 0 at center to make it 26
     {
-        
-    }
+        {
+            { 1, 1, 1},{ 1, 1, 1 },{ 1, 1, 1}
+        },
+        {
+            { 1, 1, 1},{ 1, 0, 1 },{ 1, 1, 1}
+        },
+        {
+            { 1, 1, 1},{ 1, 1, 1 },{ 1, 1, 1}
+        },
+    };
 
-    // Update is called once per frame
-    void Update()
+    private readonly TileType[] typesInLevel = new TileType[]
     {
-        
-    }
+        TileType.Owl,
+        TileType.Panda,
+        TileType.Parrot,
+        TileType.Penguin,
+        TileType.Pig,
+        TileType.Snake
+    };
+
+    public override int[,,] GetLevel() => level;
+    public override TileType[] GetTileTypesInLevel() => typesInLevel;
 }

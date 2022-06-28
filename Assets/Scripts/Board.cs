@@ -18,7 +18,7 @@ public class Board : MonoBehaviour
     private List<Tile> tileList;
 
     //Levels
-    private readonly GameLevel[] availableLevels = { new Level01(), new Level02(), new Level03() };
+    private readonly GameLevel[] availableLevels = { new Level00(), new Level01(), new Level02(), new Level03() };
     private int currentLevel;
 
     private void OnEnable()

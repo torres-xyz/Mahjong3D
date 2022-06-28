@@ -864,7 +864,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameDurationInSeconds: 300
   multiplierSecondsLimit: 3
-  startingLevel: 3
+  startingLevel: 1
 --- !u!1 &1509165166
 GameObject:
   m_ObjectHideFlags: 0
@@ -1093,14 +1093,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7356827207086727235, guid: 17e6274dccd946241bcd5477b26cb288, type: 3}
-      propertyPath: audioClipsList.Array.size
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 7356827207086727235, guid: 17e6274dccd946241bcd5477b26cb288, type: 3}
-      propertyPath: audioClipsList.Array.data[10]
-      value: 
-      objectReference: {fileID: 8300000, guid: e4cfc521b1cdd4647a88c8e0eaaaed00, type: 3}
     m_RemovedComponents: []
     m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: 17e6274dccd946241bcd5477b26cb288, type: 3}
