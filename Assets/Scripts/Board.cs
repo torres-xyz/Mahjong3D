@@ -321,16 +321,25 @@ public class Board : MonoBehaviour
     [ContextMenu("Solve Board")]
     void SolveBoard()
     {
-        IEnumerator solveBoard = SolveBoardTileByTile(0.05f);
+        IEnumerator solveBoard = SolveBoardTileByTile(0.1f);
         StopCoroutine(solveBoard);
         StartCoroutine(solveBoard);
     }
 
     IEnumerator SolveBoardTileByTile(float waitTime)
     {
-        //Change this so that it tries to find all pairs of a select type,
-        //then when it can't it moves on to the next type, until it loops around
-        //to the first type tried, until all tiles are done
+        //This will try to find all pairs of a select type,
+        //then when it can't, it moves on to the next type, until it loops around
+        //to the first type tried, until all tiles are done.
+
+        //Create a list with all types present in the board
+        List<TileType> typesInBoard = new();
+        foreach (var tile in tileList)
+        {
+            if (!typesInBoard.Contains(tile.tileType))
+                typesInBoard.Add(tile.tileType);
+        }
+        int typesInBoardCurrentIndex = 0;
 
         bool exitOfLoop = false;
         int count = 0;
@@ -340,17 +349,13 @@ public class Board : MonoBehaviour
 
             bool hasFound1stFreeTile = false;
             Tile currentTileSelected = null;
-            Tile stuckOnThisType = null;
 
             for (int i = 0; i < tileList.Count; i++)
             {
-                if (stuckOnThisType != null && stuckOnThisType.tileType == tileList[i].tileType)
-                {
-                    hasFound1stFreeTile = false;
-                    currentTileSelected = null;
-                    continue;
-                }
+                //Only checking for one type of tile at a time
+                if (tileList[i].tileType != typesInBoard[typesInBoardCurrentIndex]) continue;
 
+                //Picking our first free tile
                 if (hasFound1stFreeTile == false && IsTileFree(tileList[i]))
                 {
                     hasFound1stFreeTile = true;
@@ -358,38 +363,33 @@ public class Board : MonoBehaviour
                     continue;
                 }
 
-                if (hasFound1stFreeTile == true && tileList[i] != currentTileSelected && IsTileFree(tileList[i]))
+                if (hasFound1stFreeTile == true && //If we have already found one free tile  
+                    tileList[i] != currentTileSelected && //AND it's not this one
+                    IsTileFree(tileList[i]) && //AND this tile is free
+                    currentTileSelected.tileType == tileList[i].tileType) //AND the types are the same
                 {
-                    if (currentTileSelected.tileType == tileList[i].tileType)
-                    {
-                        (Tile, Tile) tilePair = (currentTileSelected, tileList[i]);
-                        OnPlayerFoundTilePair(null, tilePair);
+                    (Tile, Tile) tilePair = (currentTileSelected, tileList[i]);
+                    OnPlayerFoundTilePair(null, tilePair);
 
-                        hasFound1stFreeTile = false;
-                        currentTileSelected = null;
-                        stuckOnThisType = null;
+                    hasFound1stFreeTile = false;
+                    currentTileSelected = null;
 
-                        yield return new WaitForSeconds(waitTime);
-                        continue;
-                    }
+                    yield return new WaitForSeconds(waitTime);
+                    continue;
                 }
-
-                //If we are at the end of the list and have not found a match, we are on a tile we no free matches
-                if (i == tileList.Count - 1)
-                {
-                    stuckOnThisType = currentTileSelected;
-                }
-
             }
+
+            //When we reach the end of list we move on to the next tile type on the list
+            //(looping the index)
+            typesInBoardCurrentIndex = typesInBoard.Count > typesInBoardCurrentIndex + 1 ? ++typesInBoardCurrentIndex : 0;
 
             if (tileList.Count == 0)
             {
                 Debug.Log("No more tiles in list");
                 exitOfLoop = true;
             }
-            if (count > 1000)
+            if (count > 100)
             {
-
                 exitOfLoop = true;
                 Debug.Log("Loop got stuck");
             }
