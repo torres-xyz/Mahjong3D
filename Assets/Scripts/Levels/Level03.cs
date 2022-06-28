@@ -1,6 +1,6 @@
 public class Level03 : GameLevel
 {
-    private readonly int[,,] level = new int[5, 5, 5]
+    private readonly int[,,] level = new int[5, 5, 5] //92 cubes
     {
         {
             { 0,0,1,0,0 }, { 0, 1, 1, 1, 0 }, { 1, 1, 1, 1, 1 }, { 0, 1, 1, 1, 0 }, { 0, 0, 1, 0, 0 }

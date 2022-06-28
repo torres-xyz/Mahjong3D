@@ -42,6 +42,9 @@ public class Tile : MonoBehaviour
 
     private void OnClickedOnAStuckTile(object sender, Tile tile)
     {
+        if (isDisabling == true)
+            return;
+
         if (tile == this)
         {
             StopCoroutine(shakeRoutine);
@@ -69,6 +72,8 @@ public class Tile : MonoBehaviour
     {
         if (spinAndShrinkRoutine != null)
             StopCoroutine(spinAndShrinkRoutine);
+        if (shakeRoutine != null)
+            StopCoroutine(shakeRoutine);
 
         if (thisRenderer == null)
             thisRenderer = GetComponent<Renderer>();
@@ -77,6 +82,7 @@ public class Tile : MonoBehaviour
         tileType = type;
         thisRenderer.material = tileTypeMaterial[(int)type];
 
+        //For the shader that highlights the tile on mouse hover
         initialAmbientLightValue = thisRenderer.material.GetFloat("_AmbientLight");
 
         boxCollider.enabled = true;

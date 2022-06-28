@@ -1,5 +1,6 @@
 using CustomHelperFunctions;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -89,12 +90,12 @@ public class Board : MonoBehaviour
         if (totalCubes == 0)
             Debug.LogError("Board size has a 0 dimension");
 
-        if (totalCubes / level.GetTileTypesInLevel().Length % 2 != 0 )
-            Debug.LogError($"There's an uneven number of tile repetitions. Tile repetitions = {totalCubes / level.GetTileTypesInLevel().Length}");
+        //if (totalCubes / level.GetTileTypesInLevel().Length % 2 != 0)
+        //    Debug.LogError($"There's an uneven number of tile repetitions. Total cubes = {totalCubes}, Number of tile types = {level.GetTileTypesInLevel().Length}, Tile repetitions = {totalCubes / level.GetTileTypesInLevel().Length}");
 
-        int leftOverTiles = totalCubes % level.GetTileTypesInLevel().Length;
-        if (leftOverTiles % 2 != 0)
-            Debug.LogError($"There's an uneven number of leftover tiles. Total cubes = {totalCubes}");
+        //int leftOverTiles = totalCubes % level.GetTileTypesInLevel().Length;
+        //if (leftOverTiles % 2 != 0)
+        //    Debug.LogError($"There's an uneven number of leftover tiles. Total cubes = {totalCubes}");
         //End of checks
 #endif
         ReleaseAllTilesInPool();
@@ -116,7 +117,6 @@ public class Board : MonoBehaviour
             -boardSize.x * 0.5f + 0.5f - gapBetweenCubes * 1.5f,
             -boardSize.y * 0.5f + 0.5f - gapBetweenCubes * 1.5f,
             -boardSize.z * 0.5f + 0.5f - gapBetweenCubes * 1.5f);
-
 
         //Creating each cube in the board, one forloop for each dimension
         for (int i = 0; i < boardSize.x; i++)
@@ -150,8 +150,16 @@ public class Board : MonoBehaviour
 
         int currentBoardIndex = 0;
         //tileRepetitions has to be pair
-        int tileRepetitionsHere = boardList.Count / numberOfTileTypes;
-        for (int i = 0; i < tileRepetitionsHere; i++)
+        int tileRepetitions = boardList.Count / numberOfTileTypes;
+        bool subtractedOneFromTileRepetitionsToMakeItPair = false;
+
+        if (tileRepetitions % 2 != 0) //means it's not pair
+        {
+            subtractedOneFromTileRepetitionsToMakeItPair = true;
+            tileRepetitions--;
+        }
+
+        for (int i = 0; i < tileRepetitions; i++)
         {
             for (int ii = 0; ii < numberOfTileTypes; ii++)
             {
@@ -163,16 +171,52 @@ public class Board : MonoBehaviour
         //Extra tiles
         TileType extraTileType = level.GetTileTypesInLevel()[UnityEngine.Random.Range(0, level.GetTileTypesInLevel().Length)];
         int leftOverTiles = boardList.Count % numberOfTileTypes;
-        Debug.Log($"extraTileType = {extraTileType}");
-        Debug.Log($"leftOverTiles  = {leftOverTiles}");
-        for (int i = 0; i < leftOverTiles; i++)
+
+        if (subtractedOneFromTileRepetitionsToMakeItPair)
         {
-            //In here we're only adding the same type of tile as extra tiles,
-            //but in a higher difficulty mode, we could spread this more evenly among other types.
-            boardList[currentBoardIndex].Init(extraTileType);
-            currentBoardIndex++;
+            leftOverTiles += numberOfTileTypes;
         }
 
+        Debug.Log($"extraTileType = {extraTileType}");
+        Debug.Log($"leftOverTiles  = {leftOverTiles}");
+
+
+        //Figuring out the best distribution for left over tiles
+
+        for (int i = 0; i < leftOverTiles / 2; i++)
+        {
+            boardList[currentBoardIndex].Init(level.GetTileTypesInLevel()[i]);
+            boardList[currentBoardIndex + 1].Init(level.GetTileTypesInLevel()[i]);
+            currentBoardIndex += 2;
+        }
+
+
+        //for (int i = 0; i < leftOverTiles; i++)
+        //{
+        //    //In here we're only adding the same type of tile as extra tiles,
+        //    //but in a higher difficulty mode, we could spread this more evenly among other types.
+        //    boardList[currentBoardIndex].Init(extraTileType);
+        //    currentBoardIndex++;
+        //}
+
+
+        //Debug
+        for (int i = 0; i < level.GetTileTypesInLevel().Length; i++)
+        {
+            int count = 0;
+            for (int ii = 0; ii < boardList.Count; ii++)
+            {
+                if (boardList[ii].tileType == level.GetTileTypesInLevel()[i])
+                {
+                    count++;
+                }
+            }
+            Debug.Log($"There are {count} tiles of type {level.GetTileTypesInLevel()[i]}");
+            if (count % 2 != 0)
+            {
+                Debug.LogError($"There's an uneven number of tiles of type {level.GetTileTypesInLevel()[i]}");
+            }
+        }
         return boardList;
     }
 
@@ -186,7 +230,7 @@ public class Board : MonoBehaviour
 
         if (tileList.Count == 0)
         {
-            if (currentLevel == availableLevels.Length - 1)
+            if (currentLevel == availableLevels.Length)
             {
                 FinalBoardCleared?.Invoke(this, EventArgs.Empty);
             }
@@ -262,4 +306,96 @@ public class Board : MonoBehaviour
         }
         return true;
     }
+
+    [ContextMenu("Test Level Cleared")]
+    void TestLevelCleared()
+    {
+        var tileListCopy = tileList;
+        foreach (var tile in tileListCopy)
+        {
+            tileSpawner.ReleaseTile(tile);
+        }
+        BoardCleared?.Invoke(this, EventArgs.Empty);
+    }
+
+    [ContextMenu("Solve Board")]
+    void SolveBoard()
+    {
+        IEnumerator solveBoard = SolveBoardTileByTile(0.05f);
+        StopCoroutine(solveBoard);
+        StartCoroutine(solveBoard);
+    }
+
+    IEnumerator SolveBoardTileByTile(float waitTime)
+    {
+        //Change this so that it tries to find all pairs of a select type,
+        //then when it can't it moves on to the next type, until it loops around
+        //to the first type tried, until all tiles are done
+
+        bool exitOfLoop = false;
+        int count = 0;
+        while (exitOfLoop == false)
+        {
+            count++;
+
+            bool hasFound1stFreeTile = false;
+            Tile currentTileSelected = null;
+            Tile stuckOnThisType = null;
+
+            for (int i = 0; i < tileList.Count; i++)
+            {
+                if (stuckOnThisType != null && stuckOnThisType.tileType == tileList[i].tileType)
+                {
+                    hasFound1stFreeTile = false;
+                    currentTileSelected = null;
+                    continue;
+                }
+
+                if (hasFound1stFreeTile == false && IsTileFree(tileList[i]))
+                {
+                    hasFound1stFreeTile = true;
+                    currentTileSelected = tileList[i];
+                    continue;
+                }
+
+                if (hasFound1stFreeTile == true && tileList[i] != currentTileSelected && IsTileFree(tileList[i]))
+                {
+                    if (currentTileSelected.tileType == tileList[i].tileType)
+                    {
+                        (Tile, Tile) tilePair = (currentTileSelected, tileList[i]);
+                        OnPlayerFoundTilePair(null, tilePair);
+
+                        hasFound1stFreeTile = false;
+                        currentTileSelected = null;
+                        stuckOnThisType = null;
+
+                        yield return new WaitForSeconds(waitTime);
+                        continue;
+                    }
+                }
+
+                //If we are at the end of the list and have not found a match, we are on a tile we no free matches
+                if (i == tileList.Count - 1)
+                {
+                    stuckOnThisType = currentTileSelected;
+                }
+
+            }
+
+            if (tileList.Count == 0)
+            {
+                Debug.Log("No more tiles in list");
+                exitOfLoop = true;
+            }
+            if (count > 1000)
+            {
+
+                exitOfLoop = true;
+                Debug.Log("Loop got stuck");
+            }
+        }
+    }
+
+
+
 }

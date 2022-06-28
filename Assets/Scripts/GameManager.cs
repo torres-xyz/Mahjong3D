@@ -209,6 +209,8 @@ public class GameManager : MonoBehaviour
     }
 
     //Methods of Testing
+    [ContextMenu("Test Level Cleared")]
+    void TestLevelCleared() => OnNextLevelButtonPressed(null, null);
     [ContextMenu("Test GameOver Win")]
     void TestGameOverWin() => GameOver(true);
     [ContextMenu("Test GameOver Lose")]
