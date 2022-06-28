@@ -1,15 +1,12 @@
 public class Level00 : GameLevel
 {
-    private readonly int[,,] level = new int[3, 3, 3] //3*3*3 = 27, so 0 at center to make it 26
+    private readonly int[,,] level = new int[2, 2, 2] //2*2*2 = 8
     {
         {
-            { 1, 1, 1},{ 1, 1, 1 },{ 1, 1, 1}
+            { 1, 1},{ 1, 1 }
         },
         {
-            { 1, 1, 1},{ 1, 0, 1 },{ 1, 1, 1}
-        },
-        {
-            { 1, 1, 1},{ 1, 1, 1 },{ 1, 1, 1}
+            { 1, 1},{ 1, 1 }
         },
     };
 
@@ -18,9 +15,6 @@ public class Level00 : GameLevel
         TileType.Owl,
         TileType.Panda,
         TileType.Parrot,
-        TileType.Penguin,
-        TileType.Pig,
-        TileType.Snake
     };
 
     public override int[,,] GetLevel() => level;

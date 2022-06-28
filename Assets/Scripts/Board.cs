@@ -8,7 +8,8 @@ public class Board : MonoBehaviour
 {
     public static EventHandler<Tile> ClickedOnAFreeTile;
     public static EventHandler<Tile> ClickedOnAStuckTile;
-    public static EventHandler BoardInitialized;
+    //public static EventHandler BoardInitialized;
+    public static EventHandler<GameLevel> BoardInitialized;
     public static EventHandler BoardCleared;
     public static EventHandler FinalBoardCleared;
 
@@ -18,7 +19,7 @@ public class Board : MonoBehaviour
     private List<Tile> tileList;
 
     //Levels
-    private readonly GameLevel[] availableLevels = { new Level00(), new Level01(), new Level02(), new Level03() };
+    private readonly GameLevel[] availableLevels = { new Level00(), new Level01(), new Level02(), new Level03(), new Level04() };
     private int currentLevel;
 
     private void OnEnable()
@@ -92,7 +93,7 @@ public class Board : MonoBehaviour
 #endif
         ReleaseAllTilesInPool();
         tileList = CreateNewBoardFromLevel(level);
-        BoardInitialized?.Invoke(this, EventArgs.Empty); //Change this to say which level was initialized
+        BoardInitialized?.Invoke(this, level); //Change this to say which level was initialized
     }
     private List<Tile> CreateNewBoardFromLevel(GameLevel level)
     {
@@ -297,18 +298,7 @@ public class Board : MonoBehaviour
             }
         }
         return true;
-    }
-
-    [ContextMenu("Test Level Cleared")]
-    void TestLevelCleared()
-    {
-        var tileListCopy = tileList;
-        foreach (var tile in tileListCopy)
-        {
-            tileSpawner.ReleaseTile(tile);
-        }
-        BoardCleared?.Invoke(this, EventArgs.Empty);
-    }
+    } 
 
     [ContextMenu("Solve Board")]
     void SolveBoard()

@@ -64,7 +64,7 @@ public class GameManager : MonoBehaviour
     }
 
     private void RestartGame(object sender, EventArgs e) => SetupGame();
-    private void OnBoardInitialized(object sender, EventArgs e) => StartGameTimer();
+    private void OnBoardInitialized(object sender, GameLevel e) => StartGameTimer();
 
     private void SetupGame()
     {

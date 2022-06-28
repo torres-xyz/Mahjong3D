@@ -1,32 +1,34 @@
 public class Level03 : GameLevel
 {
-    private readonly int[,,] level = new int[5, 5, 5] //92 cubes
+    private readonly int[,,] level = new int[5, 5, 5] //Total 108 cubes
     {
-        {
-            { 0,0,1,0,0 }, { 0, 1, 1, 1, 0 }, { 1, 1, 1, 1, 1 }, { 0, 1, 1, 1, 0 }, { 0, 0, 1, 0, 0 }
+        {                                                                            //this colum is the top level
+            { 1, 1, 1, 1, 1 },{ 1, 1, 1, 1, 1 },{ 1, 1, 1, 1, 1 },{ 1, 1, 1, 1, 1 }, { 1, 0, 1, 0, 1 }
         },
         {
-            { 0,1,1,1,0 }, { 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1 }, { 0, 1, 1, 1, 0 }
+            { 1, 1, 1, 1, 1 },{ 1, 1, 1, 1, 1 },{ 1, 1, 1, 1, 1 },{ 1, 1, 1, 1, 1 }, { 0, 1, 1, 1, 0 }
         },
         {
-            { 1,1,1,1,1 }, { 1,1,1,1,1 }, { 1, 1, 0, 1, 1 }, { 1,1,1,1,1 }, { 1,1,1,1,1 } //putting a 0 in the center to make this even
+            { 1, 1, 1, 1, 1 },{ 1, 1, 1, 1, 1 },{ 1, 1, 1, 1, 1 },{ 1, 1, 1, 1, 1 }, { 1, 1, 0, 1, 1 }
         },
         {
-            { 0,1,1,1,0 }, { 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1 }, { 0, 1, 1, 1, 0 }
+            { 1, 1, 1, 1, 1 },{ 1, 1, 1, 1, 1 },{ 1, 1, 1, 1, 1 },{ 1, 1, 1, 1, 1 }, { 0, 1, 1, 1, 0 }
         },
         {
-            { 0,0,1,0,0 }, { 0, 1, 1, 1, 0 }, { 1, 1, 1, 1, 1 }, { 0, 1, 1, 1, 0 }, { 0, 0, 1, 0, 0 }
+            { 1, 1, 1, 1, 1 },{ 1, 1, 1, 1, 1 },{ 1, 1, 1, 1, 1 },{ 1, 1, 1, 1, 1 }, { 1, 0, 1, 0, 1 }
         },
     };
 
-    private readonly TileType[] typesInLevel = new TileType[]
+    private readonly TileType[] typesInLevel = new TileType[] //Has to have 8 types, so that (108 % 8) % 2 = 0
     {
         TileType.Owl,
         TileType.Panda,
         TileType.Parrot,
         TileType.Penguin,
         TileType.Pig,
-        TileType.Snake
+        TileType.Snake,
+        TileType.Chick,
+        TileType.Gorilla
     };
 
     public override int[,,] GetLevel() => level;
