@@ -100,6 +100,8 @@ public class GameManager : MonoBehaviour
             StopCoroutine(countdownTimer);
         }
 
+        timeLeft = gameDurationInSeconds;
+        TimeLeftChanged?.Invoke(this, timeLeft);
         countdownTimer = CountdownTimer();
         StartCoroutine(countdownTimer);
     }
